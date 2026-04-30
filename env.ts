@@ -20,6 +20,9 @@ const envSchema = z.object({
     .default("development"),
   PORT: z.coerce.number().positive().default(8000),
   DATABASE_URL: z.string().startsWith("postgresql://"),
+  SALT_ROUNDS: z.coerce.number().min(10).max(20).default(12),
+  JWT_SECRET: z.string().min(32, "Must be 32 Characters long"),
+  JWT_EXPIRES_IN: z.string().default("7d"),
 });
 
 export type ENV = z.infer<typeof envSchema>;

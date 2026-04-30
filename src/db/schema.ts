@@ -10,6 +10,7 @@ import {
   index,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
 export const userRole = pgEnum("user_role", ["admin", "librarian"]);
 
@@ -180,3 +181,9 @@ export const borrowTransactionRelations = relations(
     }),
   }),
 );
+
+export type User = typeof users.$inferSelect;
+export type NewUser = typeof users.$inferInsert;
+
+export const insertUserSchema = createInsertSchema(users);
+export const selectUserSchema = createSelectSchema(users);

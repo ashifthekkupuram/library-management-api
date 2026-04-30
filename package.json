@@ -13,15 +13,19 @@
   "type": "module",
   "dependencies": {
     "@epic-web/remember": "^1.1.0",
+    "bcrypt": "^6.0.0",
     "custom-env": "^2.0.6",
     "dotenv": "^17.4.2",
     "drizzle-orm": "^0.45.2",
+    "drizzle-zod": "^0.8.3",
     "express": "^5.2.1",
+    "jose": "^6.2.3",
     "pg": "^8.20.0",
     "zod": "^4.3.6"
   },
   "devDependencies": {
     "@tsconfig/node22": "^22.0.5",
+    "@types/bcrypt": "^6.0.0",
     "@types/express": "^5.0.6",
     "@types/node": "^25.6.0",
     "@types/pg": "^8.20.0",

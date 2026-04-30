@@ -1,11 +1,12 @@
 import { Pool } from "pg";
 import { drizzle } from "drizzle-orm/node-postgres";
-import * as schema from "./schema.ts";
-import { isProd, env } from "../../env";
 import { remember } from "@epic-web/remember";
 
+import * as schema from "./schema.ts";
+import { isProd, env } from "../../env.ts";
+
 const createPool = () => {
-  return new Pool({ connectionString: env.APP_STAGE });
+  return new Pool({ connectionString: env.DATABASE_URL });
 };
 
 let client;
