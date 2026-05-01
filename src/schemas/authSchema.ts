@@ -14,3 +14,8 @@ export const registerBodySchema = z.object({
       "Password must be at least 8 characters long and include at least one letter and one digit.",
     ),
 });
+
+export const loginBodySchema = z.object({
+  username: z.string({ error: "Username is required." }),
+  password: z.string({ error: "Password is required." }),
+});
