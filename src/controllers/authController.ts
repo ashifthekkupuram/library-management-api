@@ -5,6 +5,8 @@ import { users } from "../db/schema.ts";
 import { hashPassword, comparePassword } from "../utils/password.ts";
 import { createJWT } from "../utils/jwt.ts";
 import { eq } from "drizzle-orm";
+import { DrizzleQueryError } from "drizzle-orm";
+import { DatabaseError } from "pg";
 
 export const register = async (req: Request, res: Response) => {
   try {
@@ -39,6 +41,19 @@ export const register = async (req: Request, res: Response) => {
     });
   } catch (e) {
     console.error("Error on Register: ", e);
+
+    // if error thrown because of username is not unique
+    if (e instanceof DrizzleQueryError && e.cause instanceof DatabaseError) {
+      if (
+        e.cause.code === "23505" &&
+        e.cause.constraint === "users_username_unique"
+      ) {
+        return res.status(400).json({
+          error: "Username already taken.",
+        });
+      }
+    }
+
     return res.status(500).json({
       error: "Internal Server Error",
     });
