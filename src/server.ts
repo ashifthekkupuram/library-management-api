@@ -1,6 +1,10 @@
 import express from "express";
-import authRoute from "./routes/authRoute.ts";
+
 import errorHandler from "./middlewares/errorHandler.ts";
+
+import authRoute from "./routes/authRoute.ts";
+import bookMetadataRoute from "./routes/bookMetadataRoute.ts";
+import customerRoute from "./routes/customerRoute.ts";
 
 const app = express();
 
@@ -17,6 +21,8 @@ app.get("/health", (req, res) => {
 
 // API Endpoints
 app.use("/api/auth", authRoute);
+app.use('/api/bookmetadata', bookMetadataRoute)
+app.use('/api/customers', customerRoute)
 
 // Error Handler
 app.use(errorHandler);
