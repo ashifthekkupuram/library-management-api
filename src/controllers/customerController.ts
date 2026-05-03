@@ -246,7 +246,7 @@ export const extendMembership = async (
 
     await db
       .update(customers)
-      .set({ expiresAt: newMembershipExpiresAt })
+      .set({ expiresAt: newMembershipExpiresAt, isActive: true })
       .where(eq(customers.id, id as string));
 
     return res.json({
