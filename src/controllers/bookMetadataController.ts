@@ -3,18 +3,44 @@ import type { AuthenticatedRequestType } from "../middlewares/authenticate.ts";
 
 import { bookMetadatas } from "../db/schema.ts";
 import db from "../db/connection.ts";
-import { eq } from "drizzle-orm";
+import { eq, ilike, or, count } from "drizzle-orm";
+import { env } from "../../env.ts";
+import { fi } from "zod/locales";
 
 export const getBookMetadatas = async (
   req: AuthenticatedRequestType,
   res: Response,
 ) => {
   try {
-    const datas = await db.select().from(bookMetadatas);
+    const { page, query } = req.query;
+
+    const search = query || "";
+    const pageNumber = Math.max(1, Number(page) || 1);
+    const offset = (pageNumber - 1) * env.BOOK_METADATA_PAGE_LIMIT;
+
+    const filters = or(
+      ilike(bookMetadatas.name, `%${search}%`),
+      ilike(bookMetadatas.author, `%${search}%`),
+    );
+
+    const [{ totalBookMetadatas }] = await db
+      .select({ totalBookMetadatas: count() })
+      .from(bookMetadatas)
+      .where(filters);
+
+
+    const datas = await db
+      .select()
+      .from(bookMetadatas)
+      .where(filters)
+      .orderBy(bookMetadatas.createdAt)
+      .limit(env.BOOK_METADATA_PAGE_LIMIT)
+      .offset(offset);
 
     return res.json({
       message: "Book Metadatas recieved",
       bookMetadatas: datas,
+      totalBookMetadatas,
     });
   } catch (e) {
     throw e;

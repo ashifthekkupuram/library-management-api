@@ -1,5 +1,5 @@
 import type { Response } from "express";
-import { eq } from "drizzle-orm";
+import { count, eq, ilike, or } from "drizzle-orm";
 import { DatabaseError } from "pg";
 import { DrizzleQueryError } from "drizzle-orm";
 import type { AuthenticatedRequestType } from "../middlewares/authenticate.ts";
@@ -8,17 +8,43 @@ import { customers } from "../db/schema.ts";
 import db from "../db/connection.ts";
 import addMonthToDate from "../utils/addMonthToDate.ts";
 import generateMembershipID from "../utils/generateMembershipID.ts";
+import { env } from "../../env.ts";
 
 export const getCustomers = async (
   req: AuthenticatedRequestType,
   res: Response,
 ) => {
   try {
-    const datas = await db.select().from(customers);
+    const { page, query } = req.query;
+
+    const search = query || "";
+    const pageNumber = Math.max(1, Number(page) || 1);
+    const offset = (pageNumber - 1) * env.CUSTOMERS_PAGE_LIMIT;
+
+    const filters = or(
+      ilike(customers.name, `%${search}%`),
+      ilike(customers.email, `%${search}%`),
+      ilike(customers.phone, `%${search}%`),
+      ilike(customers.membershipId, `%${search}%`),
+    );
+
+    const [{ totalCustomers }] = await db
+      .select({ totalCustomers: count() })
+      .from(customers)
+      .where(filters);
+
+    const datas = await db
+      .select()
+      .from(customers)
+      .where(filters)
+      .orderBy(customers.createdAt)
+      .limit(env.CUSTOMERS_PAGE_LIMIT)
+      .offset(offset);
 
     return res.json({
       message: "Customers Recieved",
       customers: datas,
+      totalCustomers,
     });
   } catch (e) {
     throw e;

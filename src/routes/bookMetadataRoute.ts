@@ -11,13 +11,23 @@ import { admin } from "../middlewares/admin.ts";
 import {
   bookMetaDataBodySchema,
   bookMetaDataParamsSchema,
+  bookMetadataQuerySchema,
 } from "../schemas/bookMetaDataSchema.ts";
-import { validateBody, validateParams } from "../middlewares/validation.ts";
+import {
+  validateBody,
+  validateParams,
+  validateQuery,
+} from "../middlewares/validation.ts";
 
 const bookMetadataRoute = Router();
 
 // GET ALL Book Metadata
-bookMetadataRoute.get("/", authenticate, getBookMetadatas);
+bookMetadataRoute.get(
+  "/",
+  authenticate,
+  validateQuery(bookMetadataQuerySchema),
+  getBookMetadatas,
+);
 
 // GET ONE Book Metadata
 bookMetadataRoute.get(

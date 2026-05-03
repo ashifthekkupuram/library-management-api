@@ -12,6 +12,11 @@ export const bookMetaDataParamsSchema = z.object({
     ),
 });
 
+export const bookMetadataQuerySchema = z.object({
+  page: z.coerce.number({ error: "Page number is required." }),
+  query: z.string({ error: "Search Query Required." }).default(""),
+});
+
 export const bookMetaDataBodySchema = z.object({
   name: z.string({ error: "Book Name is Required." }),
   author: z.string({ error: "Book Author is Required." }),

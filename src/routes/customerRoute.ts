@@ -1,11 +1,16 @@
 import { Router } from "express";
 
-import { validateBody, validateParams } from "../middlewares/validation.ts";
+import {
+  validateBody,
+  validateParams,
+  validateQuery,
+} from "../middlewares/validation.ts";
 import {
   createCustomerBodySchema,
   updateCustomerBodySchema,
   customerParamsSchema,
   extendMembershipSchema,
+  customerQuerySchema,
 } from "../schemas/customerSchema.ts";
 import { authenticate } from "../middlewares/authenticate.ts";
 import {
@@ -20,7 +25,12 @@ import {
 const customerRoute = Router();
 
 // GET Customers
-customerRoute.get("/", authenticate, getCustomers);
+customerRoute.get(
+  "/",
+  authenticate,
+  validateQuery(customerQuerySchema),
+  getCustomers,
+);
 
 // GET ONE Customer
 customerRoute.get(

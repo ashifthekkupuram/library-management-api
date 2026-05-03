@@ -6,6 +6,7 @@ const errorHandler = async (
   res: Response,
   next: NextFunction,
 ) => {
+  console.log(err)
   return res.status(500).json({
     error: "Internal Server Error",
   });
