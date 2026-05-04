@@ -18,6 +18,15 @@ import {
   validateParams,
   validateQuery,
 } from "../middlewares/validation.ts";
+import {
+  bookItemBodySchema,
+  bookItemParamsSchema,
+  bookItemQuerySchema,
+} from "../schemas/bookItemSchema.ts";
+import {
+  createBookItemByMetadata,
+  getBookItemsByMetadata,
+} from "../controllers/bookItemController.ts";
 
 const bookMetadataRoute = Router();
 
@@ -63,6 +72,25 @@ bookMetadataRoute.delete(
   admin,
   validateParams(bookMetaDataParamsSchema),
   deleteBookMetadata,
+);
+
+// GET Book Items By Metadata ID
+bookMetadataRoute.get(
+  "/:id/items",
+  authenticate,
+  validateParams(bookItemParamsSchema),
+  validateQuery(bookItemQuerySchema),
+  getBookItemsByMetadata,
+);
+
+// CREATE Book Items By Metadata ID
+bookMetadataRoute.post(
+  "/:id/items",
+  authenticate,
+  admin,
+  validateParams(bookItemParamsSchema),
+  validateBody(bookItemBodySchema),
+  createBookItemByMetadata,
 );
 
 export default bookMetadataRoute;

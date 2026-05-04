@@ -25,6 +25,7 @@ const envSchema = z.object({
   JWT_EXPIRES_IN: z.string().default("7d"),
   CUSTOMERS_PAGE_LIMIT: z.coerce.number().default(8),
   BOOK_METADATA_PAGE_LIMIT: z.coerce.number().default(8),
+  BOOK_ITEM_PAGE_LIMIT: z.coerce.number().default(8),
 });
 
 export type ENV = z.infer<typeof envSchema>;

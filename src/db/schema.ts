@@ -73,6 +73,10 @@ export const bookItemCondition = pgEnum("book_item_condition", [
   "lost",
 ]);
 
+export type BookItemStatusType = (typeof bookItemStatus.enumValues)[number];
+export type BookItemConditionType =
+  (typeof bookItemCondition.enumValues)[number];
+
 export const bookItems = pgTable(
   "book_items",
   {
