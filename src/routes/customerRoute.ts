@@ -21,6 +21,15 @@ import {
   deleteCustomer,
   extendMembership,
 } from "../controllers/customerController.ts";
+import {
+  createBorrowTransactionByCustomer,
+  getBorrowTransactionByCustomer,
+} from "../controllers/borrowTransactionController.ts";
+import {
+  createTransactionBodySchema,
+  transactionParamsSchema,
+  transactionQuerySchema,
+} from "../schemas/borrowTransactionSchema.ts";
 
 const customerRoute = Router();
 
@@ -72,6 +81,24 @@ customerRoute.patch(
   validateParams(customerParamsSchema),
   validateBody(extendMembershipSchema),
   extendMembership,
+);
+
+// GET Transactions of a Customer
+customerRoute.get(
+  "/:id/transactions",
+  authenticate,
+  validateParams(transactionParamsSchema),
+  validateQuery(transactionQuerySchema),
+  getBorrowTransactionByCustomer,
+);
+
+// CREATE Transaction of a Customer
+customerRoute.post(
+  "/:id/transactions",
+  authenticate,
+  validateParams(transactionParamsSchema),
+  validateBody(createTransactionBodySchema),
+  createBorrowTransactionByCustomer,
 );
 
 export default customerRoute;

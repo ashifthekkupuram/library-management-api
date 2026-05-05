@@ -106,6 +106,9 @@ export const borrowTransactionStatus = pgEnum("borrow_transaction_status", [
   "returned",
 ]);
 
+export type BorrowTransactionStatusType =
+  (typeof borrowTransactionStatus.enumValues)[number];
+
 export const borrowTransactions = pgTable(
   "borrow_transactions",
   {
