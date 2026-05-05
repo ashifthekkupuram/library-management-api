@@ -37,3 +37,12 @@ export const bookItemBodySchema = z.object({
     })
     .default("good"),
 });
+
+export const updateBookItemBodySchema = z.object({
+  condition: z.enum(["good", "damaged", "lost"], {
+    error: "Condition required and it must be good, damaged or lost.",
+  }),
+  status: z.enum(["available", "borrowed", "reserved"], {
+    error: "Stuats required and it must be available, borrowed or reserved.",
+  }),
+});

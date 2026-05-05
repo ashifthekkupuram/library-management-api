@@ -29,8 +29,8 @@ export const getBookItemsByMetadata = async (
       status ? eq(bookItems.status, status as BookItemStatusType) : undefined,
     );
 
-    const [{ bookItemsCount }] = await db
-      .select({ bookItemsCount: count() })
+    const [{ totalBookItems }] = await db
+      .select({ totalBookItems: count() })
       .from(bookItems)
       .where(filters);
 
@@ -45,7 +45,7 @@ export const getBookItemsByMetadata = async (
     return res.json({
       message: "Book Items Recieved",
       bookItems: datas,
-      bookItemsCount,
+      totalBookItems,
     });
   } catch (e) {
     throw e;
@@ -71,6 +71,131 @@ export const createBookItemByMetadata = async (
     return res.json({
       message: "Book Items Created",
       bookItems: datas,
+    });
+  } catch (e) {
+    throw e;
+  }
+};
+
+export const getBookItems = async (
+  req: AuthenticatedRequestType,
+  res: Response,
+) => {
+  try {
+    const { page, condition, status } = req.query;
+
+    const pageNumber = Math.max(1, Number(page) || 1);
+    const offset = (pageNumber - 1) * env.BOOK_ITEM_PAGE_LIMIT;
+
+    const filters = and(
+      condition
+        ? eq(bookItems.condition, condition as BookItemConditionType)
+        : undefined,
+      status ? eq(bookItems.status, status as BookItemStatusType) : undefined,
+    );
+
+    const [{ totalBookItems }] = await db
+      .select({ totalBookItems: count() })
+      .from(bookItems)
+      .where(filters);
+
+    const datas = await db
+      .select()
+      .from(bookItems)
+      .where(filters)
+      .orderBy(bookItems.createdAt)
+      .limit(env.BOOK_ITEM_PAGE_LIMIT)
+      .offset(offset);
+
+    return res.json({
+      message: "Book Items created",
+      bookItems: datas,
+      totalBookItems,
+    });
+  } catch (e) {
+    throw e;
+  }
+};
+
+export const getBookItem = async (
+  req: AuthenticatedRequestType,
+  res: Response,
+) => {
+  try {
+    const { id } = req.params;
+
+    const [data] = await db
+      .select()
+      .from(bookItems)
+      .where(eq(bookItems.id, id as string));
+
+    if (!data) {
+      return res.status(404).json({
+        error: "Book Item not found.",
+      });
+    }
+
+    res.json({
+      message: "Book Item Recieved.",
+      bookItem: data,
+    });
+  } catch (e) {
+    throw e;
+  }
+};
+
+export const updateBookItem = async (
+  req: AuthenticatedRequestType,
+  res: Response,
+) => {
+  try {
+    const { id } = req.params;
+    const { condition, status } = req.body;
+
+    const [data] = await db
+      .update(bookItems)
+      .set({
+        condition: condition as BookItemConditionType,
+        status: status as BookItemStatusType,
+      })
+      .where(eq(bookItems.id, id as string))
+      .returning();
+
+    if (!data) {
+      return res.status(404).json({
+        error: "Book Item not found.",
+      });
+    }
+
+    return res.json({
+      message: "Book Item Deleted.",
+      bookItem: data,
+    });
+  } catch (e) {
+    throw e;
+  }
+};
+
+export const deleteBookItem = async (
+  req: AuthenticatedRequestType,
+  res: Response,
+) => {
+  try {
+    const { id } = req.params;
+
+    const [data] = await db
+      .delete(bookItems)
+      .where(eq(bookItems.id, id as string))
+      .returning();
+
+    if (!data) {
+      return res.status(404).json({
+        error: "Book Item not found.",
+      });
+    }
+
+    return res.json({
+      message: "Book Item Deleted.",
     });
   } catch (e) {
     throw e;
