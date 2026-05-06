@@ -6,6 +6,7 @@ import authRoute from "./routes/authRoute.ts";
 import bookMetadataRoute from "./routes/bookMetadataRoute.ts";
 import customerRoute from "./routes/customerRoute.ts";
 import bookItemRoute from "./routes/bookItemRoute.ts";
+import borrowTransactionRoute from "./routes/borrowTransactionRoute.ts";
 
 const app = express();
 
@@ -25,6 +26,7 @@ app.use("/api/auth", authRoute);
 app.use("/api/bookmetadata", bookMetadataRoute);
 app.use("/api/customers", customerRoute);
 app.use("/api/bookitem", bookItemRoute);
+app.use("/api/transaction", borrowTransactionRoute);
 
 // Error Handler
 app.use(errorHandler);
